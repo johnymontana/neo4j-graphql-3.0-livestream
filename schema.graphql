@@ -1,0 +1,13 @@
+type Movie {
+  title: String
+  actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
+  recommended: [Movie!]! @cypher(statement: """
+  MATCH (this)<-[:ACTED_IN]-(:Actor)-[:ACTED_IN]->(rec:Movie)
+  RETURN rec
+  """)
+}
+
+type Actor {
+  name: String
+  movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+}
