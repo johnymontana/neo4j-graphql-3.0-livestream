@@ -1,13 +1,45 @@
-type Movie {
-  title: String
-  actors: [Actor!]! @relationship(type: "ACTED_IN", direction: IN)
-  recommended: [Movie!]! @cypher(statement: """
-  MATCH (this)<-[:ACTED_IN]-(:Actor)-[:ACTED_IN]->(rec:Movie)
-  RETURN rec
-  """)
+type Article
+  @fulltext(
+    indexes: [{ name: "ArticleIndex", fields: ["title", "abstract"] }]
+  ) {
+  aboutGeoGeos: [Geo!]! @relationship(type: "ABOUT_GEO", direction: OUT)
+  aboutOrganizationOrganizations: [Organization!]!
+    @relationship(type: "ABOUT_ORGANIZATION", direction: OUT)
+  aboutPersonPeople: [Person!]!
+    @relationship(type: "ABOUT_PERSON", direction: OUT)
+  abstract: String!
+  byline: String!
+  hasPhotoPhotos: [Photo!]! @relationship(type: "HAS_PHOTO", direction: OUT)
+  hasTopicTopics: [Topic!]! @relationship(type: "HAS_TOPIC", direction: OUT)
+  published: String!
+  title: String!
+  url: String!
 }
 
-type Actor {
-  name: String
-  movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+type Geo {
+  articlesAboutGeo: [Article!]! @relationship(type: "ABOUT_GEO", direction: IN)
+  name: String! @unique
+}
+
+type Organization {
+  articlesAboutOrganization: [Article!]!
+    @relationship(type: "ABOUT_ORGANIZATION", direction: IN)
+  name: String! @unique
+}
+
+type Person {
+  articlesAboutPerson: [Article!]!
+    @relationship(type: "ABOUT_PERSON", direction: IN)
+  name: String! @unique
+}
+
+type Photo {
+  articlesHasPhoto: [Article!]! @relationship(type: "HAS_PHOTO", direction: IN)
+  caption: String
+  url: String!
+}
+
+type Topic {
+  articlesHasTopic: [Article!]! @relationship(type: "HAS_TOPIC", direction: IN)
+  name: String! @unique
 }

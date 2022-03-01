@@ -9,15 +9,15 @@ const typeDefs = fs
   .toString("utf-8");
 
 const driver = neo4j.driver(
-  "neo4j+s://fa3fed40.databases.neo4j.io",
-  neo4j.auth.basic("neo4j", "n-SHRgOGwCRgfg3PTqXv8TnfpXTHXaCUZd44FK8nKVQ")
+  process.env.NEO4J_URI,
+  neo4j.auth.basic("neo4j", process.env.NEO4J_PASSWORD)
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
 
 neoSchema.getSchema().then(async (schema) => {
   // Assert indexes and constraints defined using GraphQL schema directives
-  // await neoSchema.assertIndexesAndConstraints({ options: { create: true } });
+  await neoSchema.assertIndexesAndConstraints({ options: { create: true } });
 
   const server = new ApolloServer({
     schema,
